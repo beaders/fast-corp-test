@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ButtonActionsController;
 use App\Http\Middleware\AuthMiddleware;
 use Illuminate\Support\Facades\Route;
 
@@ -15,4 +16,9 @@ Route::middleware('web')->name('auth.')->group(function () {
         Route::get('/me', [AuthController::class, 'me'])->name('me');
         Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     });
+});
+
+Route::middleware(['web', AuthMiddleware::class])->name('actions.')->group(function () {
+    Route::post('/buy-cow', [ButtonActionsController::class, 'buyCow'])->name('buy-cow');
+    Route::post('/download', [ButtonActionsController::class, 'download'])->name('download');
 });

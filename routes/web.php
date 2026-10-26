@@ -19,11 +19,5 @@ Route::middleware(AuthMiddleware::class)->group(function () {
     Route::get('/page-a', [PagesController::class, 'pageA'])->name('page-a');
     Route::get('/page-b', [PagesController::class, 'pageB'])->name('page-b');
 
-    Route::get('/download', function () {
-        return response()->download(resource_path('downloads/sample.exe'), 'sample.exe', [
-            'Content-Type' => 'application/octet-stream',
-        ]);
-    })->name('download');
-
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });

@@ -10,7 +10,8 @@
 
         <main>
             <h1>Page B</h1>
-            <form action="{{ route('download') }}" method="get">
+            <form action="{{ route('actions.download') }}" method="post">
+                @csrf
                 <button type="submit">Download</button>
             </form>
         </main>

@@ -45,3 +45,14 @@ First request `GET /` to receive the session and `XSRF-TOKEN` cookies. Send the 
 Invalid input or credentials return `422` with JSON validation errors; unauthenticated requests to `/api/me` or `/api/logout` return `401`, and POST requests with missing or invalid CSRF tokens return `419`. Login and registration each allow 10 requests per minute per guest IP address or authenticated user and return `429` when exceeded. Successful registration, login, and logout create authentication records in `activity_events`.
 
 The shared abstract `Controller` records `view-page` events when `PagesController` serves the Page A or Page B view, using the signed-in user's ID. `AuthController` uses the same logic for the login and registration forms, with `user_id` set to `null`. Their actions are `login` and `registration`; the protected pages use `page-a` and `page-b`. Redirects and API responses do not create page-view events.
+
+## Button actions
+
+These endpoints require an authenticated session and a valid CSRF token:
+
+| Method | Endpoint | Response |
+| --- | --- | --- |
+| POST | `/api/buy-cow` | `204`; Page A then displays `thankYou` |
+| POST | `/api/download` | `200` with the `sample.exe` attachment |
+
+Each successful request creates one `button-click` record in `activity_events`, with the action (`buy-cow` or `download`), signed-in user's ID, and server timestamp. Page A prevents repeated clicks while its request is pending and lets the user retry if the request fails. Page B submits directly to the download API so the browser downloads the file. The former `GET /download` endpoint has been replaced by `POST /api/download`.
