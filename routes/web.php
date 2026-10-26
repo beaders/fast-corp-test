@@ -8,6 +8,15 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::view('/page-a', 'page-a')->name('page-a');
+Route::view('/page-b', 'page-b')->name('page-b');
+
+Route::get('/download', function () {
+    return response()->download(resource_path('downloads/sample.exe'), 'sample.exe', [
+        'Content-Type' => 'application/octet-stream',
+    ]);
+})->name('download');
+
 Route::prefix('api')->name('auth.')->group(function () {
     Route::post('/register', [AuthController::class, 'register'])
         ->middleware('throttle:10,1,auth-register:')->name('register');
