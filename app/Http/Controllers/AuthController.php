@@ -7,6 +7,7 @@ use App\Enums\ActivityEventType;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -17,6 +18,16 @@ use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
+    public function showLoginForm(): View
+    {
+        return $this->viewPage('auth.login', ActivityEventAction::Login, null);
+    }
+
+    public function showRegistrationForm(): View
+    {
+        return $this->viewPage('auth.register', ActivityEventAction::Registration, null);
+    }
+
     public function register(RegisterRequest $request): JsonResponse|RedirectResponse
     {
         $user = DB::transaction(function () use ($request): User {
@@ -30,7 +41,7 @@ class AuthController extends Controller
         Auth::guard('web')->login($user);
 
         if (! $request->is('api/*') && ! $request->expectsJson()) {
-            return redirect()->intended(route('home'));
+            return redirect()->route('page-a');
         }
 
         return response()->json([
@@ -51,7 +62,7 @@ class AuthController extends Controller
         $this->recordActivity($user, ActivityEventAction::Login);
 
         if (! $request->is('api/*') && ! $request->expectsJson()) {
-            return redirect()->intended(route('home'));
+            return redirect()->route('page-a');
         }
 
         return response()->json([
