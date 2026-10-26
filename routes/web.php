@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PagesController;
 use App\Http\Middleware\AuthMiddleware;
@@ -18,6 +19,11 @@ Route::middleware(AuthMiddleware::class)->group(function () {
     Route::redirect('/', '/page-a');
     Route::get('/page-a', [PagesController::class, 'pageA'])->name('page-a');
     Route::get('/page-b', [PagesController::class, 'pageB'])->name('page-b');
+    Route::get('/page-reports', [AnalyticsController::class, 'reports'])->name('page-reports');
+
+    Route::middleware('admin')->group(function () {
+        Route::get('/page-stats', [AnalyticsController::class, 'stats'])->name('page-stats');
+    });
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });

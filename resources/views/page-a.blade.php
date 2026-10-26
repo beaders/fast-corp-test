@@ -1,49 +1,44 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
-        <title>Page A</title>
-    </head>
-    <body>
-        @include('partials.navigation')
+@extends('layouts.analytics')
 
-        <main>
-            <h1>Page A</h1>
-            <div aria-live="polite">
-                <button type="button" id="buy-cow">Buy a cow</button>
-                <p id="buy-cow-error" hidden></p>
-            </div>
-        </main>
+@section('title', 'Page A')
 
-        <script>
-            document.getElementById('buy-cow').addEventListener('click', async function () {
-                if (this.disabled) return;
+@section('content')
+    <h1>Page A</h1>
+    <section class="card" aria-label="Page A actions">
+        <div class="card-body" aria-live="polite">
+            <button class="primary" type="button" id="buy-cow">Buy a cow</button>
+            <p class="errors" id="buy-cow-error" hidden></p>
+        </div>
+    </section>
+@endsection
 
-                const error = document.getElementById('buy-cow-error');
-                this.disabled = true;
-                error.hidden = true;
+@push('scripts')
+    <script>
+        document.getElementById('buy-cow').addEventListener('click', async function () {
+            if (this.disabled) return;
 
-                try {
-                    const response = await fetch(@json(route('actions.buy-cow')), {
-                        method: 'POST',
-                        credentials: 'same-origin',
-                        headers: {
-                            'Accept': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                        },
-                    });
+            const error = document.getElementById('buy-cow-error');
+            this.disabled = true;
+            error.hidden = true;
 
-                    if (!response.ok) throw new Error('Unable to save the action.');
+            try {
+                const response = await fetch(@json(route('actions.buy-cow')), {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    },
+                });
 
-                    this.replaceWith(document.createTextNode('thankYou'));
-                } catch {
-                    error.textContent = 'Something went wrong. Please try again.';
-                    error.hidden = false;
-                    this.disabled = false;
-                }
-            });
-        </script>
-    </body>
-</html>
+                if (!response.ok) throw new Error('Unable to save the action.');
+
+                this.replaceWith(document.createTextNode('thankYou'));
+            } catch {
+                error.textContent = 'Something went wrong. Please try again.';
+                error.hidden = false;
+                this.disabled = false;
+            }
+        });
+    </script>
+@endpush

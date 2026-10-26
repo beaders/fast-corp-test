@@ -56,3 +56,13 @@ These endpoints require an authenticated session and a valid CSRF token:
 | POST | `/api/download` | `200` with the `sample.exe` attachment |
 
 Each successful request creates one `button-click` record in `activity_events`, with the action (`buy-cow` or `download`), signed-in user's ID, and server timestamp. Page A prevents repeated clicks while its request is pending and lets the user retry if the request fails. Page B submits directly to the download API so the browser downloads the file. The former `GET /download` endpoint has been replaced by `POST /api/download`.
+
+## Statistics and reports
+
+All signed-in accounts can open Reports at `/page-reports` through the shared navigation. Statistics at `/page-stats` requires the `admin` role; regular users receive `403` and do not see its navigation link. Guests are redirected to login for both pages. Each page records its own `view-page` events.
+
+Statistics lists events from newest to oldest, with combinable date, user, and action filters. Actions are `login`, `logout`, `registration`, `view-page`, and `button-click`. Authentication actions exclude visits to the login and registration forms. The user filter includes guest/deleted-user events. Results contain 25 events per page and retain their filters and event snapshot during pagination, so new events do not repeat rows between pages.
+
+Reports shows a daily line chart and matching table for Page A views, Page B views, Buy a cow clicks, and Download clicks. Days without activity have zero counts. Totals and the chart cover the complete selected range; the table contains 31 days per page. Dates use the application timezone (UTC by default).
+
+Reports accepts optional inclusive `from` and `to` dates, with at most 366 days in one report. Without dates, it shows the available activity up to the most recent 366 days. With only `from`, it shows up to 366 days beginning there; with only `to`, it shows up to 366 days ending there. Earlier activity remains accessible by selecting another range. The chart is rendered as SVG without an external chart service or frontend build step.

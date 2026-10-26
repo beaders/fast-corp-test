@@ -1,19 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Page B</title>
-    </head>
-    <body>
-        @include('partials.navigation')
+@extends('layouts.analytics')
 
-        <main>
-            <h1>Page B</h1>
-            <form action="{{ route('actions.download') }}" method="post">
-                @csrf
-                <button type="submit">Download</button>
-            </form>
-        </main>
-    </body>
-</html>
+@section('title', 'Page B')
+
+@section('content')
+    <h1>Page B</h1>
+    <section class="card" aria-label="Page B actions">
+        <form class="card-body" action="{{ route('actions.download') }}" method="post">
+            @csrf
+            <button class="primary" type="submit">Download</button>
+        </form>
+    </section>
+@endsection
