@@ -15,7 +15,7 @@ Laravel 13 application for the Senior Software Engineer assignment, running on N
 ./stop.sh
 ```
 
-Open [http://localhost:8080](http://localhost:8080) to sign in and access Page A. The root URL redirects signed-in users to `/page-a`. The application health endpoint is [http://localhost:8080/up](http://localhost:8080/up).
+Open [http://localhost:8080](http://localhost:8080) to sign in and access Page A.
 
 `start.sh` creates `.env` if missing, builds the PHP image, installs the locked Composer dependencies, clears cached configuration, generates `APP_KEY` only when missing, starts MySQL/Redis/PHP, runs pending migrations and the admin seeder, and starts Nginx. Run it again to apply dependency, image, or migration changes. Existing keys and data are preserved.
 
