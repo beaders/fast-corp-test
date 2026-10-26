@@ -45,7 +45,7 @@ if (empty(config('app.key'))) {
 PHP
 
 docker compose up -d --wait --wait-timeout 120 php
-docker compose exec -T php php artisan migrate --no-interaction
+docker compose exec -T php php artisan migrate --seed --no-interaction
 # Recreate Nginx so it loads the latest config and resolves the current PHP container.
 docker compose up -d --wait --wait-timeout 120 --force-recreate nginx
 

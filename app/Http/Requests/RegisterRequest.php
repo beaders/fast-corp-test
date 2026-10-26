@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Models\User;
+use App\Rules\BcryptPassword;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -24,7 +25,7 @@ class RegisterRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique(User::class)],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'password' => ['bail', 'required', 'string', 'min:8', new BcryptPassword, 'confirmed'],
         ];
     }
 }

@@ -25,7 +25,7 @@
         <div>
             <label for="password">Password</label>
             <input id="password" name="password" type="password" autocomplete="new-password" minlength="8" required aria-describedby="password-hint{{ $errors->has('password') ? ' password-error' : '' }}" @error('password') aria-invalid="true" @enderror>
-            <p id="password-hint" class="hint">Use at least 8 characters.</p>
+            <p id="password-hint" class="hint">Use at least 8 characters, up to 72 bytes.</p>
             @error('password')
                 <p id="password-error" class="error" role="alert">{{ $message }}</p>
             @enderror
