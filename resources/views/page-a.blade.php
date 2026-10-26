@@ -6,10 +6,7 @@
         <title>Page A</title>
     </head>
     <body>
-        <nav aria-label="Pages">
-            <a href="{{ route('page-a') }}" aria-current="page">Page A</a>
-            <a href="{{ route('page-b') }}">Page B</a>
-        </nav>
+        @include('partials.navigation')
 
         <main>
             <h1>Page A</h1>

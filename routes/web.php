@@ -4,27 +4,25 @@ use App\Http\Controllers\AuthController;
 use App\Http\Middleware\AuthMiddleware;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
+Route::middleware('guest')->group(function () {
+    Route::view('/login', 'auth.login')->name('login');
+    Route::post('/login', [AuthController::class, 'login'])
+        ->middleware('throttle:10,1,auth-login:')->name('login.store');
+    Route::view('/register', 'auth.register')->name('register');
+    Route::post('/register', [AuthController::class, 'register'])
+        ->middleware('throttle:10,1,auth-register:')->name('register.store');
 });
 
-Route::view('/page-a', 'page-a')->name('page-a');
-Route::view('/page-b', 'page-b')->name('page-b');
+Route::middleware(AuthMiddleware::class)->group(function () {
+    Route::view('/', 'welcome')->name('home');
+    Route::view('/page-a', 'page-a')->name('page-a');
+    Route::view('/page-b', 'page-b')->name('page-b');
 
-Route::get('/download', function () {
-    return response()->download(resource_path('downloads/sample.exe'), 'sample.exe', [
-        'Content-Type' => 'application/octet-stream',
-    ]);
-})->name('download');
+    Route::get('/download', function () {
+        return response()->download(resource_path('downloads/sample.exe'), 'sample.exe', [
+            'Content-Type' => 'application/octet-stream',
+        ]);
+    })->name('download');
 
-Route::prefix('api')->name('auth.')->group(function () {
-    Route::post('/register', [AuthController::class, 'register'])
-        ->middleware('throttle:10,1,auth-register:')->name('register');
-    Route::post('/login', [AuthController::class, 'login'])
-        ->middleware('throttle:10,1,auth-login:')->name('login');
-
-    Route::middleware(AuthMiddleware::class)->group(function () {
-        Route::get('/me', [AuthController::class, 'me'])->name('me');
-        Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-    });
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });

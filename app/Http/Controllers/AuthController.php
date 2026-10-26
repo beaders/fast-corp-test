@@ -8,6 +8,7 @@ use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -16,7 +17,7 @@ use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
-    public function register(RegisterRequest $request): JsonResponse
+    public function register(RegisterRequest $request): JsonResponse|RedirectResponse
     {
         $user = DB::transaction(function () use ($request): User {
             $user = User::create($request->safe()->only(['name', 'email', 'password']));
@@ -28,12 +29,16 @@ class AuthController extends Controller
 
         Auth::guard('web')->login($user);
 
+        if (! $request->is('api/*') && ! $request->expectsJson()) {
+            return redirect()->intended(route('home'));
+        }
+
         return response()->json([
             'user' => $user->only(['id', 'name', 'email', 'role']),
         ], 201);
     }
 
-    public function login(LoginRequest $request): JsonResponse
+    public function login(LoginRequest $request): JsonResponse|RedirectResponse
     {
         if (! Auth::guard('web')->attempt($request->validated())) {
             throw ValidationException::withMessages([
@@ -44,6 +49,10 @@ class AuthController extends Controller
         $user = $request->user('web');
 
         $this->recordActivity($user, ActivityEventAction::Login);
+
+        if (! $request->is('api/*') && ! $request->expectsJson()) {
+            return redirect()->intended(route('home'));
+        }
 
         return response()->json([
             'user' => $user->only(['id', 'name', 'email', 'role']),
@@ -57,13 +66,17 @@ class AuthController extends Controller
         ]);
     }
 
-    public function logout(Request $request): Response
+    public function logout(Request $request): Response|RedirectResponse
     {
         $this->recordActivity($request->user('web'), ActivityEventAction::Logout);
 
         Auth::guard('web')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+
+        if (! $request->is('api/*') && ! $request->expectsJson()) {
+            return redirect()->route('login');
+        }
 
         return response()->noContent();
     }
